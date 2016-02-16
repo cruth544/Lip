@@ -40,8 +40,6 @@ app
     }
     var cameraPreview = document.getElementById('camera-preview')
     var songPreview = document.getElementById('song-preview')
-    console.log(windowSize)
-    console.log(cameraPreview)
     var videoOptions = {
       audio: true,
       video: {
@@ -50,8 +48,9 @@ app
         facingMode: 'user'
       }
     }
+    console.log("Before: ", songPreview)
     songPreview.src = '../assets/03-the_lonely_island-i_just_had_sex_(feat._akon).mp3'
-    console.log(songPreview)
+    console.log("After: ", songPreview)
 
 
     // used camera variables
@@ -71,9 +70,9 @@ app
       console.log('navigator.getUserMedia error: ', error);
     }
     function handleSourceOpen(event) {
-      console.log('MediaSource opened');
+      // console.log('MediaSource opened');
       sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
-      console.log('Source buffer: ', sourceBuffer);
+      // console.log('Source buffer: ', sourceBuffer);
     }
 
     function handleDataAvailable(event) {
@@ -83,7 +82,7 @@ app
     }
 
     function handleStop(event) {
-      console.log('Recorder stopped: ', event);
+      // console.log('Recorder stopped: ', event);
     }
 
     function play() {
@@ -95,6 +94,7 @@ app
     }
     // if i need to download
     function save(downloadToDisk) {
+      console.log('saving...')
       var blob = new Blob(recordedBlobs, {type: 'video/webm'})
       if (!downloadToDisk) {
         Video.video = blob
@@ -166,11 +166,11 @@ app
           }
         }
       }
-      console.log('Created MediaRecorder', mediaRecorder, 'with options', options)
+      // console.log('Created MediaRecorder', mediaRecorder, 'with options', options)
       mediaRecorder.onstop = handleStop;
       mediaRecorder.ondataavailable = handleDataAvailable;
       mediaRecorder.start(10); // collect 10ms of data
-      console.log('MediaRecorder started', mediaRecorder);
+      // console.log('MediaRecorder started', mediaRecorder);
     }
 
     $scope.stopRecording = function () {
@@ -184,6 +184,7 @@ app
     }
 
     $scope.next = function () {
+      console.log("hit next")
       save()
       $state.go('friends')
     }

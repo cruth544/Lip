@@ -2,6 +2,7 @@ app
   .factory('Video', VideoService)
 
 function VideoService() {
+  console.log('SERVICE OPEN!')
   var service = {}
   service.video = null
   service.songs = [

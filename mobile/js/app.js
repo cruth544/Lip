@@ -39,6 +39,11 @@ function runFunction($rootScope, $state) {
   })
 
   $rootScope.back = function () {
+    var audio = console.log(document.getElementById('song-preview'))
+    if (audio) {
+      audio.src = ''
+      console.log("in Back function: ", audio)
+    }
     if ($rootScope.previousState) {
       $state.go($rootScope.previousState)
     } else {
