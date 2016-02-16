@@ -1,28 +1,31 @@
 app
 .controller('SongCtrl',
-  ['$scope', '$http', '$state', '$stateParams', '$rootScope',
-  function ($scope, $http, $state, $stateParams, $rootScope) {
+  ['$scope', '$http', '$state', '$stateParams', '$rootScope', 'Video',
+  function ($scope, $http, $state, $stateParams, $rootScope, Video) {
     $scope.back = $rootScope.back
     $scope.variable = "hello"
-    $scope.newSong = function () {
+    $scope.songList = Video.songs
+    $scope.songSelect = function (song) {
       console.log("CLICKED")
-      $state.go('record', {params: {song: 'new'}})
+      Video.song = null
+      $state.go('record')
     }
 }])
 .controller('FriendsCtrl',
   ['$scope', '$http', '$state', '$stateParams', '$rootScope', 'Video',
   function($scope, $http, $state, $stateParams, $rootScope, Video){
-    $scope.back = $rootScope
-
-    console.log(window.sessionStorage.video)
+    $scope.back = $rootScope.back
+    if (!Video.video) $scope.back()
+    console.log("Service: ", Video.video)
 
 }])
 .controller('CameraCtrl',
   ['$scope', '$state', '$stateParams', '$rootScope', 'Video',
   function($scope, $state, $stateParams, $rootScope, Video){
 
-////////////////////////////////////////////////////////////////////////
+///////////////////////////////INIT SCOPE///////////////////////////////
     $scope.back = $rootScope.back
+    $scope.song = Video.song
 
 ////////////////////////////INIT VARIABLES//////////////////////////////
     var backButton    = document.getElementById('back-button')
@@ -90,7 +93,7 @@ app
     function save(downloadToDisk) {
       var blob = new Blob(recordedBlobs, {type: 'video/webm'})
       if (!downloadToDisk) {
-        window.sessionStorage.video = blob
+        Video.video = blob
       } else {
         var url = window.URL.createObjectURL(blob)
         var a = document.createElement('a')
@@ -177,7 +180,7 @@ app
     }
 
     $scope.next = function () {
-      window.sessionStorage.video =
+      save()
       $state.go('friends')
     }
 /////////////////////////////START CAMERA///////////////////////////////

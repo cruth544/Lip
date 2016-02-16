@@ -1,9 +1,29 @@
 <div class="song-ctrl" ng-class="SongCtrl">
-  <div class="songList">
+  <table class="song-list">
+    <tr>
+      <th>Song</th>
+      <th>Artist</th>
+      <th>Album</th>
+      <th>Length</th>
+    </tr>
+    <tr class="song" ng-repeat="song in songList">
+      <td class="song-name">{{song.name}}</td>
+      <td class="song-artist">{{song.artist}}</td>
+      <td class="song-album">{{song.album}}</td>
+      <td class="song-length">{{song.length}}</td>
+    </tr>
+  </table>
+  <!-- <div class="song-list">
+    <div class="song" ng-repeat="song in songList" ng-click="songSelect(song)">
+      <span class="song-name">{{song.name}}</span>
+      <span class="song-artist">{{song.artist}}</span>
+      <span class="song-album">{{song.album}}</span>
+      <span class="song-length">{{song.length}}</span>
+    </div>
     {{variable}}
-  </div>
+  </div> -->
 
-  <div class="row">
-    <div class="new-song btn btn-default large button centered" ng-click="newSong()">+</div>
+  <div class="button-container">
+    <div id="camera-button" class="new-song btn btn-default large button centered" ng-click="songSelect()">+</div>
   </div>
 </div>
