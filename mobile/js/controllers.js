@@ -6,8 +6,7 @@ app
     $scope.variable = "hello"
     $scope.songList = Video.songs
     $scope.songSelect = function (song) {
-      console.log("CLICKED")
-      Video.song = null
+      Video.song = song
       $state.go('record')
     }
 }])
@@ -48,13 +47,14 @@ app
         facingMode: 'user'
       }
     }
-    console.log("Before: ", songPreview)
-    songPreview.src = '../assets/03-the_lonely_island-i_just_had_sex_(feat._akon).mp3'
-    console.log("After: ", songPreview)
+    if (Video.song) {
+      songPreview.src = Video.song.src
+      songPreview.load()
+    }
 
 
     // used camera variables
-    var mediaRecorder, recordedBlobs, recordTimer
+    var mediaRecorder, recordedBlobs, recordTimer, songRepeat
 
 ////////////////////////////MEDIA FUNCTIONS/////////////////////////////
     function successCallback(stream) {
@@ -87,17 +87,33 @@ app
 
     function play() {
       var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
+      songPreview.currentTime = songPreview.startTime
       cameraPreview.src = window.URL.createObjectURL(superBuffer);
+      songPreview.play()
       recordButton.style.display = 'none'
-      nextButton.style.display = 'inline'
+      nextButton.style.display = 'inline';
+      (function loopAudio() {
+        console.log("looping...")
+        if (songPreview.currentTime >= songPreview.endTime) {
+          songPreview.currentTime = songPreview.startTime
+        }
+        songRepeat = window.requestAnimationFrame(loopAudio)
+      })()
       // save(true)
     }
     // if i need to download
     function save(downloadToDisk) {
       console.log('saving...')
+      window.cancelAnimationFrame(songRepeat)
       var blob = new Blob(recordedBlobs, {type: 'video/webm'})
       if (!downloadToDisk) {
-        Video.video = blob
+        Video.video = {
+          blob: blob,
+          audio: {
+            startTime: songPreview.startTime,
+            endTime: songPreview.endTime
+          }
+        }
       } else {
         var url = window.URL.createObjectURL(blob)
         var a = document.createElement('a')
@@ -126,6 +142,7 @@ app
       if (recording) {
         $scope.stopRecording()
       }
+      window.cancelAnimationFrame(songRepeat)
       backButton.style.display = 'block'
       recordButton.style.display = 'block'
       cancelButton.style.display = 'none'
@@ -170,13 +187,20 @@ app
       mediaRecorder.onstop = handleStop;
       mediaRecorder.ondataavailable = handleDataAvailable;
       mediaRecorder.start(10); // collect 10ms of data
+      songPreview.startTime = songPreview.currentTime
+      if (songPreview.paused) {
+        songPreview.play()
+      }
       // console.log('MediaRecorder started', mediaRecorder);
     }
 
     $scope.stopRecording = function () {
       clearTimeout(recordTimer)
+      window.cancelAnimationFrame(songRepeat)
       if (recording) {
         mediaRecorder.stop();
+        songPreview.pause()
+        songPreview.endTime = songPreview.currentTime
         recording = false
         console.log('Recorded Blobs: ', recordedBlobs);
         play()
@@ -184,7 +208,6 @@ app
     }
 
     $scope.next = function () {
-      console.log("hit next")
       save()
       $state.go('friends')
     }

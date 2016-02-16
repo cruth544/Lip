@@ -2,22 +2,24 @@ app
   .factory('Video', VideoService)
 
 function VideoService() {
-  console.log('SERVICE OPEN!')
   var service = {}
   service.video = null
   service.songs = [
-    {name: 'Summertime Sadness',
-      artist: 'Lana Del Rey',
-      album: 'Born To Die',
-      length: '4:24'},
-    {name: 'Take on Me',
-      artist: 'a-ha',
-      album: 'Hunting High and Low',
-      length: '3:48'},
-    {name: 'Don\'t Stop Believin\'',
-      artist: 'Journey',
-      album: '',
-      length: '4:09'},
+    {name: 'This Love',
+      artist: 'Maroon 5',
+      album: 'Songs About Jane',
+      length: '3:26',
+      src: '../assets/02 This Love.m4a'},
+    {name: 'I\'m on a Boat',
+      artist: 'Lonely Island',
+      album: 'Incredibad',
+      length: '2:36',
+      src: '../assets/04 I\'m On A Boat (feat. T-Pain).mp3'},
+    {name: 'I Just Had Sex',
+      artist: 'Lonely Island',
+      album: 'Incredibad',
+      length: '2:47',
+      src: '../assets/03-the_lonely_island-i_just_had_sex_(feat._akon).mp3'},
   ]
   service.song = {
     name: null,

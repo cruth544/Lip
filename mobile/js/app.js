@@ -39,15 +39,28 @@ function runFunction($rootScope, $state) {
   })
 
   $rootScope.back = function () {
-    var audio = console.log(document.getElementById('song-preview'))
+    var routing = {
+      home: 'home',
+      record: 'home',
+      friends: 'record',
+    }
+    var audio = document.getElementById('song-preview')
     if (audio) {
       audio.src = ''
-      console.log("in Back function: ", audio)
     }
-    if ($rootScope.previousState) {
-      $state.go($rootScope.previousState)
-    } else {
-      $state.go('home')
-    }
+    $state.go(routing[$rootScope.currentState])
+    // if ($rootScope.previousState) {
+    //   $state.go($rootScope.previousState)
+    // } else {
+    //   $state.go('home')
+    // }
   }
 }
+
+
+
+
+
+
+
+
