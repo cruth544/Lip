@@ -32,7 +32,11 @@ video {
   /*visibility: hidden;*/
   display: none;
 }
-
+#song-preview {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+}
 #camera-preview {
   position: fixed;
   top: 0;

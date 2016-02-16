@@ -39,16 +39,20 @@ app
       width: document.body.clientWidth || window.innerWidth
     }
     var cameraPreview = document.getElementById('camera-preview')
+    var songPreview = document.getElementById('song-preview')
     console.log(windowSize)
     console.log(cameraPreview)
     var videoOptions = {
-      audio: false,
+      audio: true,
       video: {
         width: {ideal: windowSize.width, max: 1080},
         height: {ideal: windowSize.height, max: 1920},
         facingMode: 'user'
       }
     }
+    songPreview.src = '../assets/03-the_lonely_island-i_just_had_sex_(feat._akon).mp3'
+    console.log(songPreview)
+
 
     // used camera variables
     var mediaRecorder, recordedBlobs, recordTimer
