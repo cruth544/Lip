@@ -1,6 +1,6 @@
 var express = require('express')
 var router  = new express.Router()
-// var usersController = require('../controllers/users')
+var UserController = require('../controllers/UserController')
 var SongController = require('../controllers/SongController')
 
 // var passport = require('passport')
@@ -17,6 +17,8 @@ router.route('/song')
   .post(SongController.addSong)
 
 // USER ROUTES
+// router.route('/user/all')
+  // .get(UserController.getAll)
 // router.route('/auth/facebook')
 //   .get(passport.authenticate('facebook', {scope: 'email'}));
 

@@ -16,13 +16,14 @@ app
     $scope.back = $rootScope.back
     if (!Video.video) return $scope.back()
     console.log("Service: ", Video.video)
-    $http.get('http://localhost:8888/song/list')
+    $http.get('https://sync-lip.herokuapp.com/song/list')
       .then(function (data) {
         console.log(data)
       }).catch(function (err) {
         console.log(err)
       })
-    $http.post('http://localhost:8888/song/', {video: Video.video, song: Video.song})
+    $http.post('https://sync-lip.herokuapp.com/song', {video: Video.video, song: Video.song})
+    Video.upload(Video.video)
 }])
 .controller('CameraCtrl',
   ['$scope', '$state', '$stateParams', '$rootScope', 'Video',
@@ -63,7 +64,6 @@ app
     }
     if (Video.song) {
       songPreview.src = Video.song.src
-      console.log(songPreview.src)
       songPreview.load()
     }
 
@@ -101,10 +101,8 @@ app
     }
 
     function play() {
-      var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
+      var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'})
       songPreview.currentTime = songPreview.startTime
-      document.getElementById('camera-preview').addEventListener("ended",
-        function(event){event.target.play()})
       cameraPreview.src = window.URL.createObjectURL(superBuffer)
       songPreview.play()
       recordButton.style.display = 'none'
@@ -112,6 +110,7 @@ app
       (function loopAudio() {
         if (songPreview.currentTime >= songPreview.endTime) {
           songPreview.currentTime = songPreview.startTime
+          cameraPreview.play()
         }
         songRepeat = window.requestAnimationFrame(loopAudio)
       })()

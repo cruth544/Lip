@@ -1,5 +1,5 @@
 'use strict'
-var app = angular.module('Lip', ['ui.router'])
+var app = angular.module('Lip', ['ui.router', 'ngFileUpload'])
   .config(['$stateProvider', '$urlRouterProvider', MainRouter])
   .run(['$rootScope', '$state', runFunction])
 
