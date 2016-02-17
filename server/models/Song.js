@@ -5,8 +5,8 @@ var SongSchema = mongoose.Schema({
   owner    : String,
   song     : String,
   users    : [ String ],
-  snippets : [ String ]
-})
+  snippets : [ ] //type: Schema.Types.ObjectId, ref: 'Snippet',
 
+})
 
 module.exports = mongoose.model('Song', SongSchema)

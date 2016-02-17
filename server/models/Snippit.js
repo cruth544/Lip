@@ -8,6 +8,4 @@ var SnippetSchema = mongoose.Schema({
   video     : [ String ]
 })
 
-
-
 module.exports = mongoose.model('Snippet', SnippetSchema)

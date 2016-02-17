@@ -1,22 +1,29 @@
 var express = require('express')
 var router  = new express.Router()
-var usersController = require('../controllers/users')
+// var usersController = require('../controllers/users')
+var SongController = require('../controllers/SongController')
 
-var restaurantsController = require('../controllers/restaurants')
- var passport = require('passport')
-  require("./passport")(passport)
+// var passport = require('passport')
+  // require("./passport")(passport)
+
+// VIDEO ROUTES
+router.route('/song/list')
+  .get(SongController.getSongsList)
+
+router.route('/song/:song')
+  .get(SongController.getSong)
+
+router.route('/song')
+  .post(SongController.addSong)
 
 // USER ROUTES
+// router.route('/auth/facebook')
+//   .get(passport.authenticate('facebook', {scope: 'email'}));
 
-router.route('/')
-
-router.route('/auth/facebook')
-  .get(passport.authenticate('facebook', {scope: 'email'}));
-
-router.route('/auth/facebook/callback')
-  .get(passport.authenticate('facebook', {
-    successRedirect: '/',
-    failureRedirect: '/'
-  }));
+// router.route('/auth/facebook/callback')
+//   .get(passport.authenticate('facebook', {
+//     successRedirect: '/',
+//     failureRedirect: '/'
+//   }));
 
 module.exports = router;

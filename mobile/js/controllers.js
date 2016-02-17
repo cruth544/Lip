@@ -14,8 +14,15 @@ app
   ['$scope', '$http', '$state', '$stateParams', '$rootScope', 'Video',
   function($scope, $http, $state, $stateParams, $rootScope, Video){
     $scope.back = $rootScope.back
-    if (!Video.video) $scope.back()
+    if (!Video.video) return $scope.back()
     console.log("Service: ", Video.video)
+    $http.get('http://localhost:8888/song/list')
+      .then(function (data) {
+        console.log(data)
+      }).catch(function (err) {
+        console.log(err)
+      })
+    $http.post('http://localhost:8888/song/', {video: Video.video, song: Video.song})
 }])
 .controller('CameraCtrl',
   ['$scope', '$state', '$stateParams', '$rootScope', 'Video',
@@ -23,8 +30,12 @@ app
 
 ///////////////////////////////INIT SCOPE///////////////////////////////
     $scope.back = function () {
-      console.log(window.stream.getTracks())
-      window.stream.getTracks()[0].stop()
+      var streams = window.stream.getTracks()
+      if (streams.length > 0) {
+        for (var i = 0; i < streams.length; i++) {
+          streams[i].stop()
+        }
+      }
       $rootScope.back()
     }
     $scope.song = Video.song
@@ -149,6 +160,7 @@ app
       }
       window.cancelAnimationFrame(songRepeat)
       if (!songPreview.paused) songPreview.pause()
+      songPreview.currentTime = 0
       backButton.style.display = 'block'
       recordButton.style.display = 'block'
       cancelButton.style.display = 'none'

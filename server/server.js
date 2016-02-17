@@ -5,21 +5,21 @@ require('dotenv').load()
 var express = require('express')
     // SessionStore = require('session-mongoose')(express)
 var expressSession = require('express-session')
-var app = express()
-var Promise = require('bluebird')
-var path  = require('path');
-var passport   = require('passport');
-var path  = require('path')
-var logger = require('morgan')
-var cookieParser = require('cookie-parser')
-var bodyParser = require('body-parser')
-var passport       = require('passport')
-var dbConfig = require('./db/credentials.js')
-var mongoose = Promise.promisifyAll( require('mongoose'))
-var helper = require('./helper.js')
-app.locals = helper
+var app           = express()
+var cors          = require('cors')
+var Promise       = require('bluebird')
+var path          = require('path')
+var passport      = require('passport');
+var logger        = require('morgan')
+var cookieParser  = require('cookie-parser')
+var bodyParser    = require('body-parser')
+var passport      = require('passport')
+var dbConfig      = require('./db/credentials.js')
+var mongoose      = Promise.promisifyAll( require('mongoose'))
 
 var credentials = require('./config/credentials.js')
+
+app.use(cors())
 
 // Set View Engine to EJS
 app.set('view engine', 'ejs')
@@ -38,6 +38,9 @@ app.use( require('cookie-parser')(credentials.cookieSecret))
 app.use( require('express-session')({
   resave: false, saveUnitialized: false,
   secret: credentials.cookieSecret }))
+
+var routes = require('./config/routes')
+app.use('/', routes)
 
 // use db connection string based on whether the environment is development or production
 switch(app.get('env')){
@@ -61,9 +64,6 @@ switch(app.get('env')){
       throw new Error('Unknown execution environment: ' + app.get('env'));
 }
 
-var PORT = process.env.PORT || 8080
+var PORT = process.env.PORT || 8888
 app.listen(PORT)
 console.log("Server starting...go to localhost:" + PORT)
-
-
-

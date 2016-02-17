@@ -13,20 +13,15 @@ var userSchema = Schema({
         email: String
       },
 
-      name                : { first : String,
-                              last  : String
-                            },
-      username            : String,
-      email               : String,
-      password            : String,
-      profile_image_url   : String,
-      admin               : Boolean,
-      reviews             : [{ restaurant : { type  : Schema.Types.ObjectId,
-                                              ref   : 'Restaurant'},
-                               body  : String,
-                               rating: Number
-                            }],
-      restaurants         : [{ type: Schema.Types.ObjectId, ref: 'Restaurant' }]
+      name: { first : String,
+              last  : String
+            },
+      username:           String,
+      email:              String,
+      password:           String,
+      profile_image_url:  String,
+      friends:            [ { } ] //type: Schema.Types.ObjectId, ref: 'User'
+      // restaurants: [{ type: Schema.Types.ObjectId, ref: 'Restaurant' }]
 
 })
 
