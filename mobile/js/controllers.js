@@ -16,14 +16,17 @@ app
     $scope.back = $rootScope.back
     if (!Video.video) $scope.back()
     console.log("Service: ", Video.video)
-
 }])
 .controller('CameraCtrl',
   ['$scope', '$state', '$stateParams', '$rootScope', 'Video',
   function($scope, $state, $stateParams, $rootScope, Video){
 
 ///////////////////////////////INIT SCOPE///////////////////////////////
-    $scope.back = $rootScope.back
+    $scope.back = function () {
+      console.log(window.stream.getTracks())
+      window.stream.getTracks()[0].stop()
+      $rootScope.back()
+    }
     $scope.song = Video.song
 
 ////////////////////////////INIT VARIABLES//////////////////////////////
@@ -40,7 +43,7 @@ app
     var cameraPreview = document.getElementById('camera-preview')
     var songPreview = document.getElementById('song-preview')
     var videoOptions = {
-      audio: true,
+      audio: false,
       video: {
         width: {ideal: windowSize.width, max: 1080},
         height: {ideal: windowSize.height, max: 1920},
@@ -49,6 +52,7 @@ app
     }
     if (Video.song) {
       songPreview.src = Video.song.src
+      console.log(songPreview.src)
       songPreview.load()
     }
 
@@ -82,18 +86,19 @@ app
     }
 
     function handleStop(event) {
-      // console.log('Recorder stopped: ', event);
+      console.log('Recorder stopped: ', event);
     }
 
     function play() {
       var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
       songPreview.currentTime = songPreview.startTime
-      cameraPreview.src = window.URL.createObjectURL(superBuffer);
+      document.getElementById('camera-preview').addEventListener("ended",
+        function(event){event.target.play()})
+      cameraPreview.src = window.URL.createObjectURL(superBuffer)
       songPreview.play()
       recordButton.style.display = 'none'
       nextButton.style.display = 'inline';
       (function loopAudio() {
-        console.log("looping...")
         if (songPreview.currentTime >= songPreview.endTime) {
           songPreview.currentTime = songPreview.startTime
         }
@@ -143,6 +148,7 @@ app
         $scope.stopRecording()
       }
       window.cancelAnimationFrame(songRepeat)
+      if (!songPreview.paused) songPreview.pause()
       backButton.style.display = 'block'
       recordButton.style.display = 'block'
       cancelButton.style.display = 'none'
