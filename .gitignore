@@ -9,6 +9,7 @@ pids
 
 # .env file
 *.env
+.env
 
 # saved output.json file
 output.json
