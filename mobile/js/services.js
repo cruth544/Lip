@@ -5,35 +5,29 @@ app
 function VideoService($http, Upload) {
   var serverURL = 'http://localhost:8888/'
 
+  Number.prototype.pad = function(size) {
+      var s = String(this);
+      while (s.length < (size || 2)) {s = "0" + s;}
+      return s;
+    }
+
+  var bucket = 'lipsyncwith.us-data'
 
   var service = {}
 
   service.video = null
-  service.getSongList = function () {
+  service.songList = []
+  service.getSongList = function (sync) {
     $http.get(serverURL + 'song/list')
       .then(function (data) {
+        service.songList = data.data.reverse()
+        sync(service.songList)
         console.log(data)
       }).catch(function (err) {
         console.log(err)
       })
   }
-  service.songs = [
-    {name: 'This Love',
-      owner: 'Maroon 5',
-      users: 'Songs About Jane',
-      snippets: '3:26',
-      songUrl: '../assets/02 This Love.m4a'},
-    {name: 'I\'m on a Boat',
-      owner: 'Lonely Island',
-      users: 'Incredibad',
-      snippets: '2:36',
-      songUrl: '../assets/04 I\'m On A Boat (feat. T-Pain).mp3'},
-    {name: 'I Just Had Sex',
-      owner: 'Lonely Island',
-      users: 'Incredibad',
-      snippets: '2:47',
-      songUrl: '../assets/03-the_lonely_island-i_just_had_sex_(feat._akon).mp3'},
-  ]
+
   service.song = {
     name     : null,
     owner    : null,
@@ -43,24 +37,33 @@ function VideoService($http, Upload) {
     songFile : null
   }
 
+  service.getSong = function (song) {
+    var url = 'https://'+ bucket +'.s3.amazonaws.com/'+ song.songUrl
+    $http.get(url).then(function (data) {
+      service.songUrl = data.config.url
+      document.getElementById('song-preview').src = data.config.url
+      console.log('the song is: ')
+      console.log(data.config)
+    }, function (err) {
+      console.log("http.get: ", err)
+    })
+  }
+
   service.friendsList
-  // $http.get()
 
   service.upload = function (snippet, song) {
     var time = new Date()
-    var name = time.getUTCFullYear() +'-'+ (time.getUTCMonth() + 1) +'-'+ time.getUTCDate() + '_'
-    name += time.getUTCHours().toFixed(2) +':'+ time.getUTCMinutes().toFixed(2) +':'+ time.getUTCSeconds().toFixed(2)
+    var name = time.getUTCFullYear() +'-'+ (time.getUTCMonth() + 1).pad(2) +'-'+ time.getUTCDate().pad(2) + '_'
+    name += time.getUTCHours().pad(2) +':'+ time.getUTCMinutes().pad(2) +':'+ time.getUTCSeconds().pad(2)
     //name += '_' + User.name
     // return console.log(snippet, song)
 
     // upload
-    console.log("UPLOADING!!!\n")
-    console.log(song)
     Upload.upload({
       url: serverURL + 'song',
       data: {video: snippet, audio: song, fileName: name, owner: 'The Maker', newSongName: song ? song.name : null}
     }).then(function (resp) {
-      console.log('Success ' + resp/*.config.data.file.name*/ + 'uploaded. Response: ' + resp.data);
+      console.log('Success!');
     }, function (resp) {
       console.log('Error status: ' + resp.status);
     }, function (evt) {

@@ -20,7 +20,8 @@ module.exports = {
     })
   },
   getSong: function (req, res, next) {
-    // req.query
+    console.log('Query: ', req.query)
+    console.log('Body: ', req.body)
   },
   addSnippet: function (snippet, songFile, options) {
     if (songFile) {
@@ -28,7 +29,7 @@ module.exports = {
       for(var key in options) {
         newSong[key] = options[key]
       }
-      console.log("SNIPPET!", options.songUrl)
+      newSong.snippets.push(snippet)
       newSong.save(function (err) {
         if (err) return console.log('ERROR: ', err)
       })

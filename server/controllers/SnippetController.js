@@ -29,9 +29,9 @@ module.exports = {
     var snippet = {}
     var bucket = 'lipsyncwith.us-data'
     form.parse(req, function (err, fields, files) {
-      res.writeHead(200, {'content-type': 'text/plain'});
-      res.write('received upload:\n\n');
-      res.end(util.inspect({fields: fields, files: files}));
+      // res.writeHead(200, {'content-type': 'text/plain'});
+      // res.write('received upload:\n\n');
+      // res.end(util.inspect({fields: fields, files: files}));
 
       // set up snippet for new snippet
       snippet.videoUrl = 'Videos/' + fields.fileName[0]
@@ -45,7 +45,6 @@ module.exports = {
 
       // UPLOAD SONG (if new song)
       if (files['audio[songFile]']) {
-        console.log(files['audio[songFile]'][0])
         snippet.songUrl  = 'Songs/' + fields.fileName[0] + '_' + files['audio[songFile]'][0]['originalFilename']
         options.songUrl = snippet.songUrl
         var song = fs.createReadStream(files['audio[songFile]'][0]['path'])
@@ -78,12 +77,12 @@ module.exports = {
           status.saved = true
           SongController.addSnippet(newSnippet, song, options)
         })
-        // res.json(status)
         // console.log("done", data);
         // console.log("https://s3.amazonaws.com/" + bucket + '/' + snippet.videoUrl);
       });
 
     });
+    res.json(status)
   }
 }
 

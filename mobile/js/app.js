@@ -12,6 +12,12 @@ function MainRouter($stateProvider, $urlRouterProvider) {
       params: null,
       controller: 'SongCtrl'
     })
+    .state('watch', {
+      url: '/watch'
+      templateUrl: 'templates/record-view.html',
+      params: null,
+      controller: 'WatchCtrl'
+    })
     .state('record', {
       url: '/record',
       templateUrl: 'templates/record-view.html',

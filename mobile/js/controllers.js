@@ -4,10 +4,10 @@ app
   function ($scope, $http, $state, $stateParams, $rootScope, Video) {
     $scope.back = $rootScope.back
     $scope.variable = "hello"
-    $scope.songList = Video.songs
+    $scope.songList = Video.songList
     $scope.songSelect = function (song) {
-      Video.song = song
-      $state.go('record')
+      Video.getSong(song)
+      $state.go('watch')
     }
     $scope.addSong = function (song) {
       song = song.files[0]
@@ -18,7 +18,9 @@ app
       //Video.song.owner = User.name
       $state.go('record')
     }
-    Video.getSongList()
+    Video.getSongList(function (songList) {
+      $scope.songList = songList
+    })
 }])
 .controller('FriendsCtrl',
   ['$scope', '$http', '$state', '$stateParams', '$rootScope', 'Video',
@@ -26,14 +28,24 @@ app
     $scope.back = $rootScope.back
     if (!Video.video) return $scope.back()
     console.log("Service: ", Video.video)
-    $http.get('https://sync-lip.herokuapp.com/song/list')
-      .then(function (data) {
-        console.log(data)
-      }).catch(function (err) {
-        console.log(err)
-      })
     // $http.post('https://sync-lip.herokuapp.com/song', {video: Video.video, song: Video.song})
     Video.upload(Video.video, Video.song)
+}])
+.controller('WatchCtrl',
+    ['$scope', '$state', '$stateParams', '$rootScope', 'Video',
+    function ($scope, $state, $stateParams, $rootScope, Video) {
+///////////////////////////////INIT SCOPE///////////////////////////////
+      $scope.back = function () {
+        var streams = window.stream.getTracks()
+        if (streams.length > 0) {
+          for (var i = 0; i < streams.length; i++) {
+            streams[i].stop()
+          }
+        }
+        $rootScope.back()
+      }
+
+
 }])
 .controller('CameraCtrl',
   ['$scope', '$state', '$stateParams', '$rootScope', 'Video',
@@ -49,7 +61,9 @@ app
       }
       $rootScope.back()
     }
-    $scope.song = Video.song
+    // Video.getSong(function (song) {
+    //   $scope.song = song
+    // })
 
 ////////////////////////////INIT VARIABLES//////////////////////////////
     var backButton    = document.getElementById('back-button')
@@ -58,12 +72,12 @@ app
     var nextButton    = document.getElementById('next-button')
 
     var recording = false
+    var beforeSeek = 0
     var windowSize = {
       height: document.body.clientHeight || window.innerHeight,
       width: document.body.clientWidth || window.innerWidth
     }
     var cameraPreview = document.getElementById('camera-preview')
-    var songPreview = document.getElementById('song-preview')
     var videoOptions = {
       audio: false,
       video: {
@@ -72,8 +86,17 @@ app
         facingMode: 'user'
       }
     }
-    if ($scope.song) {
-      songPreview.src = $scope.song.songUrl
+    var songPreview = document.getElementById('song-preview')
+    // songPreview.addEventListener("seeking", function(event){
+    //   beforeSeek = event.target.currentTime
+    // })
+    songPreview.addEventListener('seeked', function (event) {
+      if (recording) {
+        $scope.cancel()
+      }
+    })
+    if (Video.song) {
+      songPreview.src = Video.song.songUrl
       songPreview.load()
     }
 
@@ -82,6 +105,7 @@ app
     var mediaRecorder, recordedBlobs, recordTimer, songRepeat
 
 ////////////////////////////MEDIA FUNCTIONS/////////////////////////////
+
     function successCallback(stream) {
       console.log('getUserMedia() got stream: ', stream);
       window.stream = stream;
@@ -165,11 +189,12 @@ app
 
     $scope.cancel = function () {
       if (recording) {
-        $scope.stopRecording()
+        $scope.stopRecording(true)
       }
       window.cancelAnimationFrame(songRepeat)
+      console.log("The song is: ", songPreview.paused)
       if (!songPreview.paused) songPreview.pause()
-      songPreview.currentTime = 0
+      songPreview.currentTime = songPreview.startTime
       backButton.style.display = 'block'
       recordButton.style.display = 'block'
       cancelButton.style.display = 'none'
@@ -221,7 +246,7 @@ app
       // console.log('MediaRecorder started', mediaRecorder);
     }
 
-    $scope.stopRecording = function () {
+    $scope.stopRecording = function (canceled) {
       clearTimeout(recordTimer)
       window.cancelAnimationFrame(songRepeat)
       if (recording) {
@@ -230,7 +255,7 @@ app
         songPreview.endTime = songPreview.currentTime
         recording = false
         console.log('Recorded Blobs: ', recordedBlobs);
-        play()
+        if (!canceled) play()
       }
     }
 
