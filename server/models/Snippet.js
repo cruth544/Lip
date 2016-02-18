@@ -1,11 +1,10 @@
 var mongoose = require('mongoose')
 
 var SnippetSchema = mongoose.Schema({
-  name      : { type: String, required: true },
-  owner     : String,
-  startTime : Number,
-  endTime   : Number
-  video     : [ String ]
+  owner:      String,
+  startTime:  Number,
+  endTime:    Number,
+  videoUrl:   String
 })
 
 module.exports = mongoose.model('Snippet', SnippetSchema)

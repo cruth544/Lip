@@ -12,6 +12,26 @@ video {
   position: absolute;
   bottom: 10%;
   width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}#add-song  {
+  border-radius: 50px;
+  width: 75px;
+  height: 75px;
+  font-size: 24px;
+  font-weight: bold;
+}#camera-button {
+  border-radius: 50px;
+  margin: 0 auto;
+  cursor: pointer;
+}#next-button {
+  display: none;
+  left: 75%;
+}
+.button-container {
+  position: absolute;
+  bottom: 10%;
+  width: 100%;
   text-align: center;
 }#camera-button {
   border-radius: 50px;
@@ -19,6 +39,13 @@ video {
 }#next-button {
   display: none;
   left: 75%;
+}
+
+#style-upload {
+  display: inline-block;
+  width: 1px;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .back-container {

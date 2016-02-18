@@ -2,6 +2,7 @@ var express = require('express')
 var router  = new express.Router()
 var UserController = require('../controllers/UserController')
 var SongController = require('../controllers/SongController')
+var SnippetController = require('../controllers/SnippetController')
 
 // var passport = require('passport')
   // require("./passport")(passport)
@@ -14,7 +15,7 @@ router.route('/song/:song')
   .get(SongController.getSong)
 
 router.route('/song')
-  .post(SongController.addSong)
+  .post(SnippetController.addSnippet)
 
 // USER ROUTES
 // router.route('/user/all')

@@ -8,13 +8,15 @@
     </tr>
     <tr class="song" ng-repeat="song in songList" ng-click="songSelect(song)">
       <td class="song-name">{{song.name}}</td>
-      <td class="song-artist">{{song.artist}}</td>
-      <td class="song-album">{{song.album}}</td>
-      <td class="song-length">{{song.length}}</td>
+      <td class="song-artist">{{song.owner}}</td>
+      <td class="song-album">{{song.users}}</td>
+      <td class="song-length">{{song.snippets}}</td>
     </tr>
   </table>
 
   <div class="button-container">
-    <div id="camera-button" class="new-song btn btn-default large button centered" ng-click="songSelect()">+</div>
+    <div id="add-song" class="btn btn-default large button centered">
+      <input type="file" id="style-upload" class="new-song " onchange="angular.element(this).scope().addSong(this)">+</input>
+    </div>
   </div>
 </div>

@@ -1,6 +1,6 @@
 app
   .factory('Video', ['$http', 'Upload', VideoService])
-  .factory('User', UserService)
+  .factory('Session', SessionService)
 
 function VideoService($http, Upload) {
   var service = {}
@@ -8,64 +8,60 @@ function VideoService($http, Upload) {
   service.video = null
   service.songs = [
     {name: 'This Love',
-      artist: 'Maroon 5',
-      album: 'Songs About Jane',
-      length: '3:26',
-      src: '../assets/02 This Love.m4a'},
+      owner: 'Maroon 5',
+      users: 'Songs About Jane',
+      snippets: '3:26',
+      songUrl: '../assets/02 This Love.m4a'},
     {name: 'I\'m on a Boat',
-      artist: 'Lonely Island',
-      album: 'Incredibad',
-      length: '2:36',
-      src: '../assets/04 I\'m On A Boat (feat. T-Pain).mp3'},
+      owner: 'Lonely Island',
+      users: 'Incredibad',
+      snippets: '2:36',
+      songUrl: '../assets/04 I\'m On A Boat (feat. T-Pain).mp3'},
     {name: 'I Just Had Sex',
-      artist: 'Lonely Island',
-      album: 'Incredibad',
-      length: '2:47',
-      src: '../assets/03-the_lonely_island-i_just_had_sex_(feat._akon).mp3'},
+      owner: 'Lonely Island',
+      users: 'Incredibad',
+      snippets: '2:47',
+      songUrl: '../assets/03-the_lonely_island-i_just_had_sex_(feat._akon).mp3'},
   ]
   service.song = {
-    name: null,
-    artist: null,
-    album: null,
-    length: null
+    name     : null,
+    owner    : null,
+    songUrl  : null,
+    users    : null,
+    snippets : null,
+    songFile : null
   }
 
   service.friendsList
   // $http.get()
 
-  service.upload = function (snippet) {
-    var submit = function() {
-      if ($scope.form.file.$valid && $scope.file) {
-        $scope.upload($scope.file);
-      }
-    };
+  service.upload = function (snippet, song) {
+    var time = new Date()
+    var name = time.getUTCFullYear() +'-'+ (time.getUTCMonth() + 1) +'-'+ time.getUTCDate() + '_'
+    name += time.getUTCHours().toFixed(2) +':'+ time.getUTCMinutes().toFixed(2) +':'+ time.getUTCSeconds().toFixed(2)
+    //name += '_' + User.name
+    // return console.log(snippet, song)
 
-    // upload on file select or drop
-    var upload = function (file) {
-        console.log("UPLOADING!!!\n\n")
-        Upload.upload({
-            url: 'http://localhost:8888/song',
-            data: {video: snippet, audio: 'HELLOOOOOOOO', info: Upload.jsonBlob(snippet)}
-        }).then(function (resp) {
-            console.log('Success ' + resp/*.config.data.file.name*/ + 'uploaded. Response: ' + resp.data);
-        }, function (resp) {
-            console.log('Error status: ' + resp.status);
-        }, function (evt) {
-            var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-            // console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
-        });
-    };
-
-    upload()
-
-    // $http.post('http://localhost:8888/song', {video: service.video, song: service.song})
-
+    // upload
+    console.log("UPLOADING!!!\n")
+    console.log(song)
+    Upload.upload({
+      url: 'http://localhost:8888/song',
+      data: {video: snippet, audio: song, fileName: name, owner: 'The Maker', newSongName: song ? song.name : null}
+    }).then(function (resp) {
+      console.log('Success ' + resp/*.config.data.file.name*/ + 'uploaded. Response: ' + resp.data);
+    }, function (resp) {
+      console.log('Error status: ' + resp.status);
+    }, function (evt) {
+      var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+      console.log('progress: ' + progressPercentage + '% ' + evt);
+    })
   }
 
   return service
 }
 
-function UserService() {
+function SessionService() {
   var service = {}
 
 

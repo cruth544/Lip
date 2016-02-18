@@ -1,12 +1,11 @@
 var mongoose = require('mongoose')
 
 var SongSchema = mongoose.Schema({
-  name     : { type: String, required: true },
+  name     : String,
   owner    : String,
-  song     : String,
-  users    : [ String ],
-  snippets : [ ] //type: Schema.Types.ObjectId, ref: 'Snippet',
-
+  songUrl  : { type: String, required: true },
+  users    : [ {type: mongoose.Schema.Types.ObjectId, ref: 'User'} ],
+  snippets : [ {type: mongoose.Schema.Types.ObjectId, ref: 'Snippet'} ]
 })
 
 module.exports = mongoose.model('Song', SongSchema)

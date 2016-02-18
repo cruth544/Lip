@@ -9,6 +9,21 @@ app
       Video.song = song
       $state.go('record')
     }
+    $scope.addSong = function (song) {
+      song = song.files[0]
+      console.log(song)
+      Video.song.name = song.name
+      Video.song.songUrl = window.URL.createObjectURL(song)
+      Video.song.songFile = song
+      //Video.song.owner = User.name
+      $state.go('record')
+    }
+    $http.get('https://sync-lip.herokuapp.com/song/list')
+      .then(function (data) {
+        console.log(data)
+      }).catch(function (err) {
+        console.log(err)
+      })
 }])
 .controller('FriendsCtrl',
   ['$scope', '$http', '$state', '$stateParams', '$rootScope', 'Video',
@@ -22,8 +37,8 @@ app
       }).catch(function (err) {
         console.log(err)
       })
-    $http.post('https://sync-lip.herokuapp.com/song', {video: Video.video, song: Video.song})
-    Video.upload(Video.video)
+    // $http.post('https://sync-lip.herokuapp.com/song', {video: Video.video, song: Video.song})
+    Video.upload(Video.video, Video.song)
 }])
 .controller('CameraCtrl',
   ['$scope', '$state', '$stateParams', '$rootScope', 'Video',
@@ -62,8 +77,8 @@ app
         facingMode: 'user'
       }
     }
-    if (Video.song) {
-      songPreview.src = Video.song.src
+    if ($scope.song) {
+      songPreview.src = $scope.song.songUrl
       songPreview.load()
     }
 
