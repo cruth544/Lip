@@ -29,6 +29,7 @@ function VideoService($http, Upload) {
   }
 
   service.song = {
+    _id      : null,
     name     : null,
     owner    : null,
     songUrl  : null,
@@ -36,15 +37,21 @@ function VideoService($http, Upload) {
     snippets : null,
     songFile : null
   }
+  service.syncSongWith = function (song) {
+    for (var key in service.song) {
+      service.song[key] = song[key]
+    }
+  }
 
   service.getSong = function (song) {
     console.log(song)
     var url = 'https://'+ bucket +'.s3.amazonaws.com/'+ song.songUrl
-    service.songUrl = url
+    service.syncSongWith(song)
     $http.get(serverURL + 'snippets/' + song._id, {songId: song._id}).then(
       function (data) {
         console.log("Snippets: ", data)
         service.song.snippets = data.data
+        document.getElementById('song-preview').src = url
       }, function (err) {
         console.log(err)
       })

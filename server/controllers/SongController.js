@@ -1,5 +1,6 @@
 'use strict'
 var Song = require('../models/Song')
+var Snippet = require('../models/Snippet')
 var User = require('../models/User')
 var AWS = require('aws-sdk')
 var fs = require('fs')
@@ -30,17 +31,21 @@ module.exports = {
         newSong[key] = options[key]
       }
       newSong.snippets.push(snippet)
+      console.log(newSong.snippets) // array of objects
       newSong.save(function (err) {
         if (err) return console.log('ERROR: ', err)
       })
     } else {
+      console.log("SONG URL: ", options.songUrl)
       Song.update(
-        { "songUrl": options.songUrl },
+        { "songUrl": options.songUrl[0] },
         { "$push": {
             "snippets": snippet._id
         }},
         function(err, numAffected) {
-          console.log("Update error: ", err)
+          if (err) {
+            console.log("Update error: ", err)
+          }
         })
     }
   }

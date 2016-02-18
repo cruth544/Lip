@@ -30,6 +30,8 @@ app
     console.log("Service: ", Video.video)
     // $http.post('https://sync-lip.herokuapp.com/song', {video: Video.video, song: Video.song})
     Video.upload(Video.video, Video.song)
+    Video.getSong(Video.song)
+    $state.go('watch')
 }])
 .controller('WatchCtrl',
   ['$scope', '$state', '$stateParams', '$rootScope', 'Video',
@@ -37,26 +39,69 @@ app
 
 ///////////////////////////////INIT SCOPE///////////////////////////////
     $scope.back = function () {
-      var streams = window.stream.getTracks()
-      if (streams.length > 0) {
-        for (var i = 0; i < streams.length; i++) {
-          streams[i].stop()
+      if (window.stream) {
+        var streams = window.stream.getTracks()
+        if (streams.length > 0) {
+          for (var i = 0; i < streams.length; i++) {
+            streams[i].stop()
+          }
         }
       }
       $rootScope.back()
     }
+    if (!Video.song.songUrl) return $scope.back()
 
 ////////////////////////////INIT VARIABLES//////////////////////////////
     var backButton    = document.getElementById('back-button')
-    var cancelButton  = document.getElementById('cancel-button')
     var recordButton  = document.getElementById('camera-button')
     var nextButton    = document.getElementById('next-button')
+    recordButton.style.display = 'none'
+    nextButton.style.display = 'inline'
 
-    var playing = false
 
-    var cameraPreview = document.getElementById('camera-preview')
+    var playingIndex = 0
+    var loaded = false
+
+    var videoPreview = document.getElementById('camera-preview')
     var songPreview = document.getElementById('song-preview')
+    songPreview.removeAttribute("controls")
 
+////////////////////////////////FUNCTIONS///////////////////////////////
+
+    function nextSnippet() {
+      playingIndex++
+      if (playingIndex >= Video.song.snippets.length) return $state.go('record')
+      changeVideoSourceTo(Video.song.snippets[playingIndex])
+    }
+    function changeVideoSourceTo(snippet) {
+      var bucket = 'lipsyncwith.us-data'
+      var url = 'https://'+ bucket +'.s3.amazonaws.com/'+ snippet.videoUrl
+      songPreview.currentTime = snippet.startTime
+      if (!songPreview.paused) songPreview.pause()
+      videoPreview.src = url
+      videoPreview.play()
+    }
+
+    $scope.next = function () {
+      nextSnippet()
+    }
+
+///////////////////////////////START////////////////////////////////////
+    songPreview.addEventListener("canplaythrough", function (event) {
+      if (!loaded) {
+        loaded = true
+        changeVideoSourceTo(Video.song.snippets[0])
+        console.log(Video.song.snippets)
+      }
+    })
+
+    videoPreview.addEventListener("playing", function (event) {
+      songPreview.play()
+    })
+
+    videoPreview.addEventListener("ended", function (event) {
+      nextSnippet()
+    })
 
 }])
 .controller('CameraCtrl',
@@ -65,14 +110,17 @@ app
 
 ///////////////////////////////INIT SCOPE///////////////////////////////
     $scope.back = function () {
-      var streams = window.stream.getTracks()
-      if (streams.length > 0) {
-        for (var i = 0; i < streams.length; i++) {
-          streams[i].stop()
+      if (window.stream) {
+        var streams = window.stream.getTracks()
+        if (streams.length > 0) {
+          for (var i = 0; i < streams.length; i++) {
+            streams[i].stop()
+          }
         }
       }
       $rootScope.back()
     }
+    if (!Video.song.songUrl) return $scope.back()
     // Video.getSong(function (song) {
     //   $scope.song = song
     // })
@@ -99,6 +147,7 @@ app
       }
     }
     var songPreview = document.getElementById('song-preview')
+    songPreview.setAttribute('controls', 'controls')
     // songPreview.addEventListener("seeking", function(event){
     //   beforeSeek = event.target.currentTime
     // })
@@ -107,9 +156,13 @@ app
         $scope.cancel()
       }
     })
+
     if (Video.song) {
-      songPreview.src = Video.song.songUrl
+      var bucket = 'lipsyncwith.us-data'
+      var url = 'https://'+ bucket +'.s3.amazonaws.com/'+ Video.song.songUrl
+      songPreview.src = url
       songPreview.load()
+      songPreview.currentTime = Video.song.snippets[Video.song.snippets.length - 1].endTime
     }
 
 
@@ -219,6 +272,7 @@ app
     }
 
     $scope.startRecording = function() {
+      var recordLength = 15500
       recording = true
       var options = {mimeType: 'video/webm'}
       backButton.style.display = 'none'
@@ -226,19 +280,19 @@ app
       recordedBlobs = []
       try {
         mediaRecorder = new MediaRecorder(window.stream, options);
-        recordTimer = setTimeout($scope.stopRecording, 10000)
+        recordTimer = setTimeout($scope.stopRecording, recordLength)
       } catch (e0) {
         console.log('Unable to create MediaRecorder with options Object: ', e0);
         try {
           options = {mimeType: 'video/webm,codecs=vp9'};
           mediaRecorder = new MediaRecorder(window.stream, options);
-          recordTimer = setTimeout($scope.stopRecording, 10000)
+          recordTimer = setTimeout($scope.stopRecording, recordLength)
         } catch (e1) {
           console.log('Unable to create MediaRecorder with options Object: ', e1);
           try {
             options = 'video/vp8'; // Chrome 47
             mediaRecorder = new MediaRecorder(window.stream, options);
-            recordTimer = setTimeout($scope.stopRecording, 10000)
+            recordTimer = setTimeout($scope.stopRecording, recordLength)
           } catch (e2) {
             alert('MediaRecorder is not supported by this browser.\n\n' +
                 'Try Firefox 29 or later, or Chrome 47 or later, with Enable experimental Web Platform features enabled from chrome://flags.');
@@ -273,6 +327,7 @@ app
 
     $scope.next = function () {
       save()
+      // Video.getSong(Video.song)
       $state.go('friends')
     }
 /////////////////////////////START CAMERA///////////////////////////////
