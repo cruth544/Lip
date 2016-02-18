@@ -3,9 +3,20 @@ app
   .factory('Session', SessionService)
 
 function VideoService($http, Upload) {
+  var serverURL = 'http://localhost:8888/'
+
+
   var service = {}
 
   service.video = null
+  service.getSongList = function () {
+    $http.get(serverURL + 'song/list')
+      .then(function (data) {
+        console.log(data)
+      }).catch(function (err) {
+        console.log(err)
+      })
+  }
   service.songs = [
     {name: 'This Love',
       owner: 'Maroon 5',
@@ -46,7 +57,7 @@ function VideoService($http, Upload) {
     console.log("UPLOADING!!!\n")
     console.log(song)
     Upload.upload({
-      url: 'http://localhost:8888/song',
+      url: serverURL + 'song',
       data: {video: snippet, audio: song, fileName: name, owner: 'The Maker', newSongName: song ? song.name : null}
     }).then(function (resp) {
       console.log('Success ' + resp/*.config.data.file.name*/ + 'uploaded. Response: ' + resp.data);
