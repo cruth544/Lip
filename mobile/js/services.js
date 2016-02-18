@@ -38,15 +38,24 @@ function VideoService($http, Upload) {
   }
 
   service.getSong = function (song) {
+    console.log(song)
     var url = 'https://'+ bucket +'.s3.amazonaws.com/'+ song.songUrl
-    $http.get(url).then(function (data) {
-      service.songUrl = data.config.url
-      document.getElementById('song-preview').src = data.config.url
-      console.log('the song is: ')
-      console.log(data.config)
-    }, function (err) {
-      console.log("http.get: ", err)
-    })
+    service.songUrl = url
+    $http.get(serverURL + 'snippets/' + song._id, {songId: song._id}).then(
+      function (data) {
+        console.log("Snippets: ", data)
+        service.song.snippets = data.data
+      }, function (err) {
+        console.log(err)
+      })
+    // $http.get(url).then(function (data) {
+    //   service.songUrl = data.config.url
+    //   document.getElementById('song-preview').src = data.config.url
+    //   console.log('the song is: ')
+    //   console.log(data.config)
+    // }, function (err) {
+    //   console.log("http.get: ", err)
+    // })
   }
 
   service.friendsList

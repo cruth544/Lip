@@ -13,7 +13,7 @@ function MainRouter($stateProvider, $urlRouterProvider) {
       controller: 'SongCtrl'
     })
     .state('watch', {
-      url: '/watch'
+      url: '/watch',
       templateUrl: 'templates/record-view.html',
       params: null,
       controller: 'WatchCtrl'
@@ -47,6 +47,7 @@ function runFunction($rootScope, $state) {
   $rootScope.back = function () {
     var routing = {
       home: 'home',
+      watch: 'home',
       record: 'home',
       friends: 'record',
     }

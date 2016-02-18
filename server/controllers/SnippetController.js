@@ -83,6 +83,15 @@ module.exports = {
 
     });
     res.json(status)
+  },
+  getSnippetsForSong: function (req, res, next) {
+    console.log("Params: ", req.params)
+    Song.find({_id: req.params.song})
+      .then(function (data) {
+        console.log("Snippets: ", data[0].snippets)
+      }, function (err) {
+        console.log("Error: ", err)
+      })
   }
 }
 

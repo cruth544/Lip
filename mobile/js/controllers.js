@@ -32,18 +32,30 @@ app
     Video.upload(Video.video, Video.song)
 }])
 .controller('WatchCtrl',
-    ['$scope', '$state', '$stateParams', '$rootScope', 'Video',
-    function ($scope, $state, $stateParams, $rootScope, Video) {
+  ['$scope', '$state', '$stateParams', '$rootScope', 'Video',
+  function ($scope, $state, $stateParams, $rootScope, Video) {
+
 ///////////////////////////////INIT SCOPE///////////////////////////////
-      $scope.back = function () {
-        var streams = window.stream.getTracks()
-        if (streams.length > 0) {
-          for (var i = 0; i < streams.length; i++) {
-            streams[i].stop()
-          }
+    $scope.back = function () {
+      var streams = window.stream.getTracks()
+      if (streams.length > 0) {
+        for (var i = 0; i < streams.length; i++) {
+          streams[i].stop()
         }
-        $rootScope.back()
       }
+      $rootScope.back()
+    }
+
+////////////////////////////INIT VARIABLES//////////////////////////////
+    var backButton    = document.getElementById('back-button')
+    var cancelButton  = document.getElementById('cancel-button')
+    var recordButton  = document.getElementById('camera-button')
+    var nextButton    = document.getElementById('next-button')
+
+    var playing = false
+
+    var cameraPreview = document.getElementById('camera-preview')
+    var songPreview = document.getElementById('song-preview')
 
 
 }])
@@ -72,7 +84,7 @@ app
     var nextButton    = document.getElementById('next-button')
 
     var recording = false
-    var beforeSeek = 0
+    // var beforeSeek = 0
     var windowSize = {
       height: document.body.clientHeight || window.innerHeight,
       width: document.body.clientWidth || window.innerWidth

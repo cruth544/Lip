@@ -18,6 +18,9 @@ router.route('/song/:song')
 router.route('/song')
   .post(SnippetController.addSnippet)
 
+router.route('/snippets/:song')
+  .get(SnippetController.getSnippetsForSong)
+
 // USER ROUTES
 // router.route('/user/all')
   // .get(UserController.getAll)
