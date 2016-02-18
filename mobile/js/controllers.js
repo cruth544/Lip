@@ -18,12 +18,7 @@ app
       //Video.song.owner = User.name
       $state.go('record')
     }
-    $http.get('https://sync-lip.herokuapp.com/song/list')
-      .then(function (data) {
-        console.log(data)
-      }).catch(function (err) {
-        console.log(err)
-      })
+    Video.getSongList()
 }])
 .controller('FriendsCtrl',
   ['$scope', '$http', '$state', '$stateParams', '$rootScope', 'Video',

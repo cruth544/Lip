@@ -13,7 +13,11 @@ var mongoose = require('mongoose')
 
 module.exports = {
   getSongsList: function (req, res, next) {
-    res.json({hello: 'world'})
+    Song.find({}).then(function (songs) {
+      res.json(songs)
+    }).catch(function (err) {
+      console.log(err)
+    })
   },
   getSong: function (req, res, next) {
     // req.query
