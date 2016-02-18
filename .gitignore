@@ -8,7 +8,6 @@ pids
 *.seed
 
 # .env file
-*.env
 .env
 
 # saved output.json file
