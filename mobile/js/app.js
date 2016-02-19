@@ -47,6 +47,11 @@ function runFunction($rootScope, $state, $location, Auth) {
   $rootScope.currentState;
 
   $rootScope.$on('$stateChangeStart', function () {
+    if (!Auth.currentUser) {
+      Auth.getUser().then(function (data) {
+        Auth.currentUser = data.data._id
+      })
+    }
     // if (Auth.isLoggedIn()) return
     // $location.path('/login')
   })

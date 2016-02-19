@@ -36,15 +36,12 @@ app
 .controller('SongCtrl',
   ['$scope', '$state', '$stateParams', '$rootScope', 'Video', 'Auth',
   function ($scope, $state, $stateParams, $rootScope, Video, Auth) {
-    Auth.getUser().then(function (data) {
-      console.log(data)
-    }, function (err) {
-      console.log(err)
-    })
+
     $scope.back = $rootScope.back
     $scope.variable = "hello"
     $scope.songList = Video.songList
     $scope.songSelect = function (song) {
+      song.owner = Auth.currentUser
       Video.getSong(song)
       $state.go('watch')
     }
@@ -54,9 +51,7 @@ app
       Video.song.name = song.name
       Video.song.songUrl = window.URL.createObjectURL(song)
       Video.song.songFile = song
-      Auth.getUser().then(function (data) {
-        Video.song.owner = data.data._id
-      })
+      Video.song.owner = Auth.currentUser
       $state.go('record')
     }
     Video.getSongList(function (songList) {
@@ -116,6 +111,7 @@ app
     function changeVideoSourceTo(snippet) {
       var bucket = 'lipsyncwith.us-data'
       var url = 'https://'+ bucket +'.s3.amazonaws.com/'+ snippet.videoUrl
+      console.log(snippet.startTime)
       songPreview.currentTime = snippet.startTime
       if (!songPreview.paused) songPreview.pause()
       videoPreview.src = url
@@ -172,7 +168,7 @@ app
     var nextButton    = document.getElementById('next-button')
 
     var recording = false
-    // var beforeSeek = 0
+    var songReady = false
     var windowSize = {
       height: document.body.clientHeight || window.innerHeight,
       width: document.body.clientWidth || window.innerWidth
@@ -188,9 +184,9 @@ app
     }
     var songPreview = document.getElementById('song-preview')
     songPreview.setAttribute('controls', 'controls')
-    // songPreview.addEventListener("seeking", function(event){
-    //   beforeSeek = event.target.currentTime
-    // })
+    songPreview.addEventListener("canplaythrough", function(event){
+      songReady = true
+    })
     songPreview.addEventListener('seeked', function (event) {
       if (recording) {
         $scope.cancel()
@@ -205,7 +201,7 @@ app
       }
       songPreview.src = url
       songPreview.load()
-      if (songPreview.snippets) {
+      if (Video.song.snippets) {
         songPreview.currentTime = Video.song.snippets[Video.song.snippets.length - 1].endTime
       }
     }
@@ -291,7 +287,7 @@ app
 ////////////////////////////RECORD FUNCTIONS////////////////////////////
     $scope.toggleRecording = function() {
       if (!recording) {
-        $scope.startRecording()
+        if (songReady) $scope.startRecording()
       } else {
         $scope.stopRecording()
       }

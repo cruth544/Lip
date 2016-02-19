@@ -6,7 +6,7 @@ app
 
 angular.module('AuthService', [])
   .factory('AuthToken', ['$window', AuthToken])
-  .factory('Auth', ['$http', '$q', 'AuthToken', Auth])
+  .factory('Auth', ['$http', '$q', 'AuthToken', 'Video', Auth])
   .factory('AuthInterceptor',
     ['$q', '$location', 'AuthToken', AuthInterceptor])
 
@@ -29,6 +29,8 @@ function AuthToken($window) {
 
 function Auth($http, $q, AuthToken) {
   var authFactory = {}
+
+  authFactory.currentUser = null
 
   authFactory.login = function (email, password) {
     return $http.post(SERVER_URL + 'user/authenticate',
@@ -89,7 +91,7 @@ function AuthInterceptor($q, $location, AuthToken) {
 
 
 function VideoService($http, Upload) {
-  // var serverURL = 'https://lipsyncwithus.herokuapp.com/'
+  var service = {}
 
   Number.prototype.pad = function(size) {
       var s = String(this);
@@ -97,7 +99,7 @@ function VideoService($http, Upload) {
       return s;
     }
 
-  var service = {}
+  service.currentUser = null
 
   service.video = null
   service.songList = []
@@ -153,8 +155,9 @@ function VideoService($http, Upload) {
     var time = new Date()
     var name = time.getUTCFullYear() +'-'+ (time.getUTCMonth() + 1).pad(2) +'-'+ time.getUTCDate().pad(2) + '_'
     name += time.getUTCHours().pad(2) +':'+ time.getUTCMinutes().pad(2) +':'+ time.getUTCSeconds().pad(2)
-    //name += '_' + User.name
+    // name += '_' +
 
+    console.log("OWNER: ", song)
     // upload
     Upload.upload({
       url: SERVER_URL + 'song',
