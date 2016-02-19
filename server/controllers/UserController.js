@@ -15,7 +15,6 @@ module.exports = {
             message: "Authentication Failed: User not found"
           })
         } else {
-          console.log("BODY PASSWORD: ", req.body.password)
           var validPassword = user.comparePasswordSync(req.body.password)
           if (!validPassword) {
             res.json({
@@ -24,6 +23,7 @@ module.exports = {
             })
           } else {
             var token = jwt.sign({
+              _id: user._id,
               email: user.email,
               username: user.username
             }, process.env.SUPER_SECRET, {

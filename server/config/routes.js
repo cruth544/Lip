@@ -5,8 +5,12 @@ var UserController = require('../controllers/UserController')
 var SongController = require('../controllers/SongController')
 var SnippetController = require('../controllers/SnippetController')
 
-// var passport = require('passport')
-  // require("./passport")(passport)
+router.route('/user/authenticate')
+  .post(UserController.authenticate)
+
+router.route('/user/signup')
+  .post(UserController.signUp)
+
 router.use(function (req, res, next) {
   var token = req.body.token || req.query.token || req.headers['x-access-token']
 
@@ -48,11 +52,6 @@ router.route('/snippets/:song')
   .get(SnippetController.getSnippetsForSong)
 
 // USER ROUTES
-router.route('/user/authenticate')
-  .post(UserController.authenticate)
-
-router.route('/user/signup')
-  .post(UserController.signUp)
 // router.route('/user/all')
   // .get(UserController.getAll)
 // router.route('/auth/facebook')

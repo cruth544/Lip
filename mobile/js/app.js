@@ -1,9 +1,11 @@
 'use strict'
-var app = angular.module('Lip', ['ui.router', 'ngFileUpload'])
-  .config(['$stateProvider', '$urlRouterProvider', MainRouter])
-  .run(['$rootScope', '$state', runFunction])
+var app = angular.module('Lip',
+  ['ui.router', 'ngFileUpload', 'AuthService'])
+  .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', MainRouter])
+  .run(['$rootScope', '$state', '$location', 'Auth', runFunction])
 
-function MainRouter($stateProvider, $urlRouterProvider) {
+function MainRouter($stateProvider, $urlRouterProvider, $httpProvider) {
+  $httpProvider.interceptors.push('AuthInterceptor')
 
   $stateProvider
     .state('home', {
@@ -40,9 +42,15 @@ function MainRouter($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/')
 }
 
-function runFunction($rootScope, $state) {
+function runFunction($rootScope, $state, $location, Auth) {
   $rootScope.previousState;
   $rootScope.currentState;
+
+  $rootScope.$on('$stateChangeStart', function () {
+    // if (Auth.isLoggedIn()) return
+    // $location.path('/login')
+  })
+
   $rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
       $rootScope.previousState = from.name;
       $rootScope.currentState = to.name;

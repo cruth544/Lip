@@ -1,12 +1,46 @@
 app
 .controller('LoginCtrl',
-  ['$scope', '$http', '$state', '$stateParams', '$rootScope', 'Video',
-  function ($scope, $http, $state, $stateParams, $rootScope, Video) {
+  ['$scope', '$http', '$state', 'Auth',
+  function ($scope, $http, $state, Auth) {
+    Auth.logout()
+    $scope.signup = false
+    $scope.userLogin = function (email, password) {
+      Auth.login(email, password).then(function (data) {
+        console.log(data)
+        if (data.data.success) {
+          $state.go('home')
+        } else {
+          $scope.loginError = data.data.message
+        }
+      }, function (err) {
+        console.log("Login Error: ", err)
+      })
+    }
 
+    $scope.userSignup = function (email, username, password) {
+      if (!email || !username || !password) {
+        return $scope.loginError = "Please complete all fields"
+      }
+
+      $http.post(SERVER_URL + 'user/authenticate',
+        {email: email,
+          username: username,
+          password: password
+      })
+      .success(function (data) {
+        AuthToken.setToken(data.token)
+        return data
+      })
+    }
   }])
 .controller('SongCtrl',
-  ['$scope', '$http', '$state', '$stateParams', '$rootScope', 'Video',
-  function ($scope, $http, $state, $stateParams, $rootScope, Video) {
+  ['$scope', '$state', '$stateParams', '$rootScope', 'Video', 'Auth',
+  function ($scope, $state, $stateParams, $rootScope, Video, Auth) {
+    Auth.getUser().then(function (data) {
+      console.log(data)
+    }, function (err) {
+      console.log(err)
+    })
     $scope.back = $rootScope.back
     $scope.variable = "hello"
     $scope.songList = Video.songList
@@ -20,7 +54,9 @@ app
       Video.song.name = song.name
       Video.song.songUrl = window.URL.createObjectURL(song)
       Video.song.songFile = song
-      //Video.song.owner = User.name
+      Auth.getUser().then(function (data) {
+        Video.song.owner = data.data._id
+      })
       $state.go('record')
     }
     Video.getSongList(function (songList) {
@@ -33,7 +69,6 @@ app
     $scope.back = $rootScope.back
     if (!Video.video) return $scope.back()
     console.log("Service: ", Video.video)
-    // $http.post('https://sync-lip.herokuapp.com/song', {video: Video.video, song: Video.song})
     Video.upload(Video.video, Video.song)
     Video.getSong(Video.song)
     $state.go('watch')
