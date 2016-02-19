@@ -15,7 +15,7 @@ var mongoose = require('mongoose')
 module.exports = {
   getSongsList: function (req, res, next) {
     Song.find({})
-    // .populate('snippets users owner')
+    .populate('snippets users owner')
     .exec(function (err, songs) {
       if (err) return console.log("Get Songs Error: ", err)
       res.json(songs)

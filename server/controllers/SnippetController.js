@@ -87,8 +87,8 @@ module.exports = {
   },
   getSnippetsForSong: function (req, res, next) {
     Song.findById(req.params.song)
-      .populate('snippets')
-      // .populate('snippets users owner')
+      // .populate('snippets')
+      .populate('snippets users owner')
       .exec(function (err, song) {
         if (err) return console.log("Get Snippets Error: ", err)
         res.send(song.snippets)
