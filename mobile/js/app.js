@@ -30,6 +30,12 @@ function MainRouter($stateProvider, $urlRouterProvider) {
       params: null,
       controller: 'FriendsCtrl'
     })
+    .state('login', {
+      url: '/login',
+      templateUrl: 'templates/login-modal.html',
+      params: null,
+      controller: 'LoginCtrl'
+    })
 
   $urlRouterProvider.otherwise('/')
 }

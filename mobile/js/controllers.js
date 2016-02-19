@@ -1,4 +1,9 @@
 app
+.controller('LoginCtrl',
+  ['$scope', '$http', '$state', '$stateParams', '$rootScope', 'Video',
+  function ($scope, $http, $state, $stateParams, $rootScope, Video) {
+
+  }])
 .controller('SongCtrl',
   ['$scope', '$http', '$state', '$stateParams', '$rootScope', 'Video',
   function ($scope, $http, $state, $stateParams, $rootScope, Video) {
@@ -11,7 +16,7 @@ app
     }
     $scope.addSong = function (song) {
       song = song.files[0]
-      console.log(song)
+      console.log("Song: ", song)
       Video.song.name = song.name
       Video.song.songUrl = window.URL.createObjectURL(song)
       Video.song.songFile = song
@@ -158,11 +163,17 @@ app
     })
 
     if (Video.song) {
+      console.log(Video.song)
       var bucket = 'lipsyncwith.us-data'
       var url = 'https://'+ bucket +'.s3.amazonaws.com/'+ Video.song.songUrl
+      if (Video.song.songFile) {
+        url = window.URL.createObjectURL(Video.song.songFile);
+      }
       songPreview.src = url
       songPreview.load()
-      songPreview.currentTime = Video.song.snippets[Video.song.snippets.length - 1].endTime
+      if (songPreview.snippets) {
+        songPreview.currentTime = Video.song.snippets[Video.song.snippets.length - 1].endTime
+      }
     }
 
 

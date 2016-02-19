@@ -4,7 +4,7 @@ app
 
 function VideoService($http, Upload) {
   var serverURL = 'http://localhost:8888/'
-  // var serverURL = ''
+  // var serverURL = 'https://lipsyncwithus.herokuapp.com/'
 
   Number.prototype.pad = function(size) {
       var s = String(this);
