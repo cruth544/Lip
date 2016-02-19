@@ -163,7 +163,6 @@ app
     })
 
     if (Video.song) {
-      console.log(Video.song)
       var bucket = 'lipsyncwith.us-data'
       var url = 'https://'+ bucket +'.s3.amazonaws.com/'+ Video.song.songUrl
       if (Video.song.songFile) {

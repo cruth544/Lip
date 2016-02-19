@@ -1,7 +1,12 @@
 app
   .factory('Video', ['$http', 'Upload', VideoService])
-  .factory('Session', SessionService)
+  .factory('Authentication', ['$http', '$q', 'AuthToken', AuthenticationService])
 
+function AuthenticationService($http, $q, AuthToken) {
+  var auth = {}
+
+  return auth
+}
 function VideoService($http, Upload) {
   var serverURL = 'http://localhost:8888/'
   // var serverURL = 'https://lipsyncwithus.herokuapp.com/'
@@ -92,12 +97,6 @@ function VideoService($http, Upload) {
   return service
 }
 
-function SessionService() {
-  var service = {}
-
-
-  return service
-}
 
 
 
