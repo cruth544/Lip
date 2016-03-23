@@ -77,8 +77,8 @@ app
       console.log("Video.song: ", Video.song)
       Video.getSong(Video.song, function () {
         console.log("Second")
-        $state.go('home')
       })
+      $state.go('home')
     })
 }])
 .controller('WatchCtrl',

@@ -91,6 +91,8 @@ module.exports = {
       var query = 'songUrl'
       var value = req.body.songUrl
     } else {
+      if (req.params.song === 'null') {
+        return console.log("Don't use params")}
       console.log("Using Params: ", req.params.song)
       var query = '_id'
       var value = req.params.song
