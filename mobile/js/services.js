@@ -1,6 +1,7 @@
 const SERVER_URL = 'http://localhost:8888/'
 // const SERVER_URL = 'https://lipsyncwithus.herokuapp.com/'
-const BUCKET = 'lipsyncwith.us-data'
+const BUCKET = 'lipsyncwith.us-data.s3.amazonaws.com/'
+// const BUCKET = 's3-us-west-2.amazonaws.com/lipsyncwith.us-data/'
 app
   .factory('Video', ['$http', 'Upload', VideoService])
 
@@ -130,14 +131,16 @@ function VideoService($http, Upload) {
     }
   }
 
-  service.getSong = function (song) {
+  service.getSong = function (song, complete) {
     console.log(song)
-    var url = 'https://'+ BUCKET +'.s3.amazonaws.com/'+ song.songUrl
+    var url = 'https://'+ BUCKET + song.songUrl
     service.syncSongWith(song)
-    $http.get(SERVER_URL + 'snippets/' + song._id, {songId: song._id}).then(function (data) {
+    $http.get(SERVER_URL + 'snippets/' + song._id, {songUrl: song.songUrl}).then(function (data) {
         console.log("Snippets: ", data)
         service.song.snippets = data.data
         document.getElementById('song-preview').src = url
+        console.log("First")
+        if (complete) complete();
       }, function (err) {
         console.log(err)
       })
@@ -151,7 +154,7 @@ function VideoService($http, Upload) {
     // })
   }
 
-  service.upload = function (snippet, song) {
+  service.upload = function (snippet, song, complete) {
     var time = new Date()
     var name = time.getUTCFullYear() +'-'+ (time.getUTCMonth() + 1).pad(2) +'-'+ time.getUTCDate().pad(2) + '_'
     name += time.getUTCHours().pad(2) +':'+ time.getUTCMinutes().pad(2) +':'+ time.getUTCSeconds().pad(2)
@@ -163,7 +166,9 @@ function VideoService($http, Upload) {
       url: SERVER_URL + 'song',
       data: {video: snippet, audio: song, fileName: name, owner: song.owner, newSongName: song ? song.name : null}
     }).then(function (resp) {
-      console.log('Success!');
+      console.log('Success!', resp.data);
+      service.song.songUrl = resp.data.songUrl
+      complete()
     }, function (resp) {
       console.log('Error status: ' + resp.status);
     }, function (evt) {

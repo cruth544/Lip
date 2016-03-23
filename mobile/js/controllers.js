@@ -73,9 +73,13 @@ app
     $scope.back = $rootScope.back
     if (!Video.video) return $scope.back()
     console.log("Service: ", Video.video)
-    Video.upload(Video.video, Video.song)
-    Video.getSong(Video.song)
-    $state.go('watch')
+    Video.upload(Video.video, Video.song, function () {
+      console.log("Video.song: ", Video.song)
+      Video.getSong(Video.song, function () {
+        console.log("Second")
+        $state.go('home')
+      })
+    })
 }])
 .controller('WatchCtrl',
   ['$scope', '$state', '$stateParams', '$rootScope', 'Video',
@@ -118,8 +122,10 @@ app
       changeVideoSourceTo(Video.song.snippets[playingIndex])
     }
     function changeVideoSourceTo(snippet) {
-      var bucket = 'lipsyncwith.us-data'
-      var url = 'https://'+ bucket +'.s3.amazonaws.com/'+ snippet.videoUrl
+      console.log("Change Video To: ", snippet)
+      // var bucket = 'lipsyncwith.us-data.s3.amazonaws.com/'
+      var bucket = 's3-us-west-2.amazonaws.com/lipsyncwith.us-data/'
+      var url = 'https://'+ bucket + snippet.videoUrl
       console.log(snippet.startTime)
       songPreview.currentTime = snippet.startTime
       if (!songPreview.paused) songPreview.pause()

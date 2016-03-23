@@ -46,7 +46,6 @@ module.exports = {
       // UPLOAD SONG (if new song)
       if (files['audio[songFile]']) {
         snippet.songUrl  = 'Songs/' + fields.fileName[0] + '_' + files['audio[songFile]'][0]['originalFilename']
-        console.log("Line 49: ", snippet.songUrl)
         options.songUrl = snippet.songUrl
         var song = fs.createReadStream(files['audio[songFile]'][0]['path'])
         s3Client.putObject({
@@ -55,9 +54,7 @@ module.exports = {
           ACL: 'public-read',
           Body: song
         }, function(err, data) {
-          console.log("Err: ", err)
           if (err) throw err;
-          console.log("Data: ", data)
         })
       }
 
@@ -84,14 +81,23 @@ module.exports = {
         // console.log("done", data);
         // console.log("https://s3.amazonaws.com/" + bucket + '/' + snippet.videoUrl);
       });
-
+      res.json(options)
     });
-    res.json(status)
   },
   getSnippetsForSong: function (req, res, next) {
-    Song.findById(req.params.song)
-      // .populate('snippets')
-      .populate('snippets users owner')
+    console.log("params: ", req.params, "body: ", req.body)
+    if (req.body.songUrl) {
+      console.log("Using Body: ", req.body.songUrl)
+      var query = 'songUrl'
+      var value = req.body.songUrl
+    } else {
+      console.log("Using Params: ", req.params.song)
+      var query = '_id'
+      var value = req.params.song
+    }
+    Song.findOne({[query]: value})
+      .populate('snippets')
+      // .populate('snippets users owner')
       .select('-password')
       .exec(function (err, song) {
         if (err) return console.log("Get Snippets Error: ", err)
