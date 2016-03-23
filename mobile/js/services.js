@@ -1,5 +1,5 @@
-// const SERVER_URL = 'http://localhost:8888/'
-const SERVER_URL = 'https://lipsyncwithus.herokuapp.com/'
+const SERVER_URL = 'http://localhost:8888/'
+// const SERVER_URL = 'https://lipsyncwithus.herokuapp.com/'
 const BUCKET = 'lipsyncwith.us-data'
 app
   .factory('Video', ['$http', 'Upload', VideoService])

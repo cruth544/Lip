@@ -46,6 +46,7 @@ module.exports = {
       // UPLOAD SONG (if new song)
       if (files['audio[songFile]']) {
         snippet.songUrl  = 'Songs/' + fields.fileName[0] + '_' + files['audio[songFile]'][0]['originalFilename']
+        console.log("Line 49: ", snippet.songUrl)
         options.songUrl = snippet.songUrl
         var song = fs.createReadStream(files['audio[songFile]'][0]['path'])
         s3Client.putObject({
@@ -54,7 +55,9 @@ module.exports = {
           ACL: 'public-read',
           Body: song
         }, function(err, data) {
+          console.log("Err: ", err)
           if (err) throw err;
+          console.log("Data: ", data)
         })
       }
 
